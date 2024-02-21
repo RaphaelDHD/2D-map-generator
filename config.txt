@@ -1,0 +1,18 @@
+{
+    "path_checkpoints": "/home/p2106803/Documents/Focuss/Fooocus/models/checkpoints",
+    "path_loras": "/home/p2106803/Documents/Focuss/Fooocus/models/loras",
+    "path_embeddings": "/home/p2106803/Documents/Focuss/Fooocus/models/embeddings",
+    "path_vae_approx": "/home/p2106803/Documents/Focuss/Fooocus/models/vae_approx",
+    "path_upscale_models": "/home/p2106803/Documents/Focuss/Fooocus/models/upscale_models",
+    "path_inpaint": "/home/p2106803/Documents/Focuss/Fooocus/models/inpaint",
+    "path_controlnet": "/home/p2106803/Documents/Focuss/Fooocus/models/controlnet",
+    "path_clip_vision": "/home/p2106803/Documents/Focuss/Fooocus/models/clip_vision",
+    "path_fooocus_expansion": "/home/p2106803/Documents/Focuss/Fooocus/models/prompt_expansion/fooocus_expansion",
+    "path_outputs": "/home/p2106803/Documents/Focuss/Fooocus/outputs", 
+    "default_styles": [
+        "Game Strategy Game",
+        "SAI Pixel Art"
+    ],
+    "default_aspect_ratio": "256*256",
+    "default_image_number": 1
+}
