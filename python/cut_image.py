@@ -5,8 +5,11 @@ from sklearn.cluster import MiniBatchKMeans
 import xml.etree.ElementTree as ET
 from math import *
 
-def cut_image_and_save(image_path, tile_size=32, num_tiles=64):
+def cut_image_and_save(image_path, tile_size=16, num_tiles=256):
     def generate_tileset(image, tile_size, num_tiles):
+        # Réduire la résolution de l'image
+        image = image.resize((256, 256))
+
         # Convertir l'image en tableau numpy
         image_array = np.array(image)
 
@@ -112,9 +115,10 @@ def cut_image_and_save(image_path, tile_size=32, num_tiles=64):
         data = ET.SubElement(layer, 'data')
         data.set('encoding', 'csv')
 
-        # Utiliser les IDs des tuiles utilisées pour remplir les données
-        data.text = ','.join(str(tile_id) for tile_id in used_tile_ids)
-        data.tail = '\n '
+        # Utiliser directement les IDs des tuiles utilisées pour remplir les données
+        data_lines = ','.join(str(tile_id + 1) for tile_id in used_tile_ids)
+        data.text = '\n' + data_lines + '\n'
+        data.tail = '\n'
 
         tree = ET.ElementTree(root)
         return tree
@@ -124,14 +128,19 @@ def cut_image_and_save(image_path, tile_size=32, num_tiles=64):
     if image.mode != "RGB":
         image = image.convert("RGB")
 
+    # Réduire la résolution de l'image
+    image = image.resize((256, 256))
+
     # Génération du tileset
     tileset_image, tileset, tile_ids = generate_tileset(image, tile_size, num_tiles)
 
+    # Création du sous-dossier pour les fichiers de sortie
+    output_folder = os.path.join("tiled_file", os.path.splitext(os.path.basename(image_path))[0])
+    os.makedirs(output_folder, exist_ok=True)
+
     # Sauvegarde du tileset
-    folder_name = "tilesets"
-    os.makedirs(folder_name, exist_ok=True)
     tileset_name = f"tileset_{os.path.basename(image_path)}"
-    tileset_path = os.path.join(folder_name, tileset_name)
+    tileset_path = os.path.join(output_folder, tileset_name)
     tileset_image.save(tileset_path, format="PNG")
 
     # Reconstruction de l'image à partir du tileset
@@ -139,19 +148,16 @@ def cut_image_and_save(image_path, tile_size=32, num_tiles=64):
     
     # Sauvegarde de l'image reconstruite
     reconstructed_image_name = f"reconstructed_{os.path.basename(image_path)}"
-    reconstructed_image_path = os.path.join(folder_name, reconstructed_image_name)
+    reconstructed_image_path = os.path.join(output_folder, reconstructed_image_name)
     reconstructed_image.save(reconstructed_image_path, format="PNG")
 
     # Génération et sauvegarde du fichier TSX & TMX
-    tsx_file = generate_tsx(tileset_path, tile_ids)
-    folder_name = "tiled_file"
-    os.makedirs(folder_name, exist_ok=True)
-    path = os.path.splitext(os.path.basename(image_path))[0]
-    tsx_name = f"tsx_{path}.tsx"
-    tsx_path = os.path.join(folder_name, tsx_name)
+    tsx_file = generate_tsx(tileset_name, tile_ids)
+    tsx_name = f"tsx_{os.path.splitext(os.path.basename(image_path))[0]}.tsx"
+    tsx_path = os.path.join(output_folder, tsx_name)
     tsx_file.write(tsx_path, encoding='utf-8', xml_declaration=True)
 
-    tmx_file = generate_tmx(tsx_path, used_tile_ids)
-    tmx_name = f"tmx_{path}.tmx"
-    tmx_path = os.path.join(folder_name, tmx_name)
+    tmx_file = generate_tmx(tsx_name, used_tile_ids)
+    tmx_name = f"tmx_{os.path.splitext(os.path.basename(image_path))[0]}.tmx"
+    tmx_path = os.path.join(output_folder, tmx_name)
     tmx_file.write(tmx_path, encoding='utf-8', xml_declaration=True)
