@@ -2,8 +2,8 @@ import numpy as np
 import datetime
 import random
 import math
-import os
 import cv2
+import os
 
 from PIL import Image
 

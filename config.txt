@@ -13,6 +13,9 @@
         "Game Strategy Game",
         "SAI Pixel Art"
     ],
-    "default_aspect_ratio": "256*256",
-    "default_image_number": 1
+    "default_aspect_ratio": "1024*1024",
+    "default_image_number": 1,
+    "example_inpaint_prompts": [
+        "2D rpgmaker map for :"
+    ] 
 }

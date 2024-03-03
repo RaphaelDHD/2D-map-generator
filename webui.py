@@ -1,6 +1,7 @@
 import gradio as gr
 import random
 import os
+import glob
 import json
 import time
 import shared
@@ -17,14 +18,28 @@ import modules.meta_parser
 import args_manager
 import copy
 
+
+from python.main import export
 from modules.sdxl_styles import legal_style_names
 from modules.private_logger import get_current_html_path
 from modules.ui_gradio_extensions import reload_javascript
 from modules.auth import auth_enabled, check_auth
 
+def dernier_fichier_cree(chemin_dossier_parent):
+    d = [(d, os.path.getctime(d)) for d in [os.path.join(chemin_dossier_parent, d) for d in os.listdir(chemin_dossier_parent)] if os.path.isdir(d)]
+    d = sorted(d, key=lambda x: x[1], reverse=True)
+    if not d:
+        return None
+    f = [(f, os.path.getctime(f)) for f in [os.path.join(d[0][0], f) for f in os.listdir(d[0][0])] if os.path.isfile(f) and f.lower().endswith('.png')]
+    f = sorted(f, key=lambda x: x[1], reverse=True)
+    return None if not f else f[0][0]
+
+
 
 def export_clicked(*args):
-    return
+    dernier_fichier= dernier_fichier_cree('outputs')
+    print(dernier_fichier)
+    return export(dernier_fichier)
 
 def generate_clicked(*args):
     import ldm_patched.modules.model_management as model_management
@@ -76,6 +91,10 @@ def generate_clicked(*args):
 
     execution_time = time.perf_counter() - execution_start_time
     print(f'Total time: {execution_time:.2f} seconds')
+    time.sleep(5)
+    dernier_fichier=dernier_fichier_cree('outputs')
+    print(dernier_fichier)
+    export(dernier_fichier)
     return
 
 
@@ -133,8 +152,6 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, outputs=[skip_button, stop_button],
                                       queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, queue=False, show_progress=False)
-                with gr.Column(sclale=3, min_widht=0):
-                    export_button = gr.Button(label="Export", value="Export", elem_classes='type_row', elem_id='export_button', visible=True)
             with gr.Row(elem_classes='advanced_check_row', visible=False):
                 input_image_checkbox = gr.Checkbox(visible='false')
                 advanced_checkbox = gr.Checkbox(visible='false')
@@ -599,6 +616,7 @@ with shared.gradio_root:
                   outputs=[generate_button, stop_button, skip_button, state_is_generating]) \
             .then(fn=update_history_link, outputs=history_link) \
             .then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed')
+
 
         for notification_file in ['notification.ogg', 'notification.mp3']:
             if os.path.exists(notification_file):
