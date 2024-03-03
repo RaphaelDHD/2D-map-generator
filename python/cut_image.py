@@ -79,6 +79,57 @@ def cut_image_and_save(image_path, tile_size=32, num_tiles=64):
         return tree
 
 
+    def generate_tmx(tsx_path):
+        root = ET.Element('map')
+        root.set('version', '1.0')
+        root.set('orientation', 'orthogonal')
+        root.set('renderorder', 'right-down')
+        root.set('width', '16')
+        root.set('height', '16')
+        root.set('tilewidth', str(tile_size))
+        root.set('tileheight', str(tile_size))
+        root.set('nextobjectid', '1')
+        root.text = '\n '
+
+        tileset = ET.SubElement(root, 'tileset')
+        tileset.set('firstgid', '1')
+        tileset.set('source', tsx_path)
+        tileset.tail = '\n '
+
+
+        layer = ET.SubElement(root, 'layer')
+        layer.set('name', 'Tile Layer 6')
+        layer.set('width', '16')
+        layer.set('height', '16')
+        layer.tail = '\n '
+        layer.text = '\n '  
+
+        data = ET.SubElement(layer, 'data')
+        data.set('encoding', 'csv')
+        data.text = '''
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+            18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18
+        '''
+        data.tail = '\n '
+
+        tree = ET.ElementTree(root)
+        return tree
+
+
 
     # Chargement de l'image
     image = Image.open(image_path)
@@ -110,8 +161,14 @@ def cut_image_and_save(image_path, tile_size=32, num_tiles=64):
     path = os.path.splitext(os.path.basename(image_path))[0]
     tsx_name = f"tsx_{path}.tsx"
     tsx_path = os.path.join(folder_name, tsx_name)
-    with open(tsx_path, 'wb') as f:
-        tsx_file.write(f, encoding='utf-8', xml_declaration=True)
+    tsx_file.write(tsx_path, encoding='utf-8', xml_declaration=True)
+
+    tmx_file = generate_tmx(tsx_path)
+    tmx_name = f"tmx_{path}.tmx"
+    tmx_path = os.path.join(folder_name, tmx_name)
+    tmx_file.write(tmx_path, encoding='utf-8', xml_declaration=True)
+    
+
 
 
 

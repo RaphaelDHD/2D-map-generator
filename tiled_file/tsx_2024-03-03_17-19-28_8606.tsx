@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<tileset name="tsx_2024-03-03_14-57-48_2047.png" tilewidth="32" tileheight="32" tilecount="64" columns="8"><image source="tilesets/tileset_2024-03-03_14-57-48_2047.png" trans="ff01fe" width="256" height="256" /><terraintypes>
+<tileset name="tsx_2024-03-03_17-19-28_8606.png" tilewidth="32" tileheight="32" tilecount="64" columns="8"><image source="tilesets/tileset_2024-03-03_17-19-28_8606.png" trans="ff01fe" width="256" height="256" /><terraintypes>
  <terrain name="terrain" tile="0" /></terraintypes><tile id="0" />
  <tile id="1" />
  <tile id="2" />
